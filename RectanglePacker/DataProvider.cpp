@@ -1,24 +1,17 @@
 /******************************************************************************************************************************************
      * File: DataProvider.h
-     * Author: Lunåv Arseniy (c) 2020
+     * Author: Lunåv Arseniy (c) 2022
      * Email: lunars@mail.ru
 ******************************************************************************************************************************************/
 #include "DataProvider.h"
+#include "Rectangle.h"
 #include <regex>
 #include <sstream>
 
 
-DataProvider::DataProvider()
-{
-}
-
-DataProvider::~DataProvider()
-{
-}
-
 bool DataProvider::parseData(Size& size, std::vector<std::shared_ptr<Rectangle> >& rectangles)
 {
-    std::clog << "Reading data...\n\n";
+    std::clog << "Insert data:\n(the size for all containers and the sizes for every rectangle)\n\nwidth,height\n";
 
     std::string line;
     while (std::getline(std::cin, line)) {
@@ -38,20 +31,20 @@ bool DataProvider::parseData(Size& size, std::vector<std::shared_ptr<Rectangle> 
         while (std::getline(lineStream, cell, ',')) {
             parsedRow.push_back(std::stoi(cell));
         }
-        parsedData.push_back(parsedRow);
+        m_parsedData.push_back(parsedRow);
     }
 
-    if (parsedData.empty()) {
+    if (m_parsedData.empty()) {
         std::cerr << "No input data.\n";
         return false;
     }
 
-    size = { parsedData[0][0], parsedData[0][1] };
+    size = { m_parsedData[0][0], m_parsedData[0][1] };
     if (size.width < size.height) {
         std::swap(size.width, size.height);
     }
 
-    for (auto it = parsedData.begin() + 1, itLEnd = parsedData.end(); it != itLEnd; ++it) {
+    for (auto it = m_parsedData.begin() + 1, itLEnd = m_parsedData.end(); it != itLEnd; ++it) {
         Rectangle r({ (*it)[0], (*it)[1] });
         rectangles.push_back(std::make_shared<Rectangle>(r));
     }
@@ -59,14 +52,14 @@ bool DataProvider::parseData(Size& size, std::vector<std::shared_ptr<Rectangle> 
     return true;
 }
 
-void DataProvider::outputData(const Size& containerSize, std::vector<std::shared_ptr<Rectangle> >& rectangles)
+void DataProvider::outputData(const Size& containerSize, const std::vector<std::shared_ptr<Rectangle>>& rectangles)
 {
-    int containersNumber = (*rectangles.rbegin())->getContainerId() + 1;
+    const int containersNumber = (*rectangles.rbegin())->getContainerId() + 1;
 
     std::cout << containersNumber << "," <<
         containerSize.width << "," << containerSize.height << "\n";
     for (auto& r : rectangles) {
-        int containerId = r->getContainerId();
+        const int containerId = r->getContainerId();
         if (containerId != MISSING_CONTAINER_ID) {
             auto& vv = r->getCorners();
             std::cout << containerId;

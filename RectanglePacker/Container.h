@@ -1,12 +1,11 @@
 /******************************************************************************************************************************************
 	 * File: Container.h
-	 * Author: Lunåv Arseniy (c) 2020
+	 * Author: Lunåv Arseniy (c) 2022
 	 * Email: lunars@mail.ru
 ******************************************************************************************************************************************/
 #pragma once
-
 #include "pch.h"
-#include "Rectangle.h"
+class Rectangle;
 
 
 class Container
@@ -14,30 +13,35 @@ class Container
 public:
 	Container();
 	Container(int containerId, const Size& size);
-	~Container();
 
-	const Size& getSize();
+	virtual ~Container() = default;
+	Container(const Container&) = default;
+	Container& operator=(const Container&) = default;
+	Container(Container&&) = default;
+	Container& operator=(Container&&) = default;
+
+	const Size& getSize() const;
 	void setSize(const Size& size);
 
-	int getContainerId();
-	bool getIsEmpty();
+	int getContainerId() const;
+	bool getIsEmpty() const;
 
 	bool placeFirst(std::shared_ptr<Rectangle> rectangle);
 	bool placeNext(std::shared_ptr<Rectangle> rectangle);
 	bool placeOpposite(std::shared_ptr<Rectangle> rectangle);
 
-	const std::list<std::shared_ptr<Rectangle> >& getPlacedRectangles();
+	const std::list<std::shared_ptr<Rectangle> >& getPlacedRectangles() const;
 	void updateOppositeShelfSlots();
 	void excludeRectangle(std::shared_ptr<Rectangle> rectangle);
 
 private:
-	int containerId;
-	Size size;
-	bool isEmpty;
-	double tiltAngle;
+	int m_containerId;
+	Size m_size;
+	bool m_isEmpty;
+	double m_tiltAngle;
 
-	std::list<std::shared_ptr<Rectangle> > placedRectangles;
-	std::vector<ShelfCorner> mainShelfSlots;     // main slots for placing a rectangle
-	std::vector<ShelfCorner> oppositeShelfSlots; // slots at main shelfs from the opposite side
-	std::vector<ShelfCorner> tiltShelfSlots;     // additional slots for placing a rectangle in case of a non-zero tilt angle
+	std::list<std::shared_ptr<Rectangle> > m_placedRectangles;
+	std::vector<ShelfCorner> m_mainShelfSlots;     // main slots for placing a rectangle
+	std::vector<ShelfCorner> m_oppositeShelfSlots; // slots at main shelfs from the opposite side
+	std::vector<ShelfCorner> m_tiltShelfSlots;     // additional slots for placing a rectangle in case of a non-zero tilt angle
 };

@@ -1,17 +1,16 @@
 /******************************************************************************************************************************************
 	 * File: pch.h
-	 * Author: Lunåv Arseniy (c) 2020
+	 * Author: Lunåv Arseniy (c) 2022
 	 * Email: lunars@mail.ru
 ******************************************************************************************************************************************/
 #pragma once
-
-#include <iostream>
 #include <regex>
+#include <cmath>
 #include <vector>
 #include <array>
 #include <memory>
-#include <math.h>
 #include <numeric>
+#include <iostream>
 #include <list>
 
 
@@ -21,27 +20,32 @@ struct Size
 	int height;
 };
 
-/* The template class for the points and vectors.
-* Note: It's possible to solve the problem using integer precision for the containers with a zero tilt angle.
+/**
+ * \brief The template class for the points and vectors.
+ * \details Note: It's possible to solve the problem using integer precision for the containers with a zero tilt angle.
 */
 template <class T>
 struct Point2D
 {
-	Point2D() : x(0), y(0) {};
-	Point2D(T x, T y) : x(x), y(y) {};
+	Point2D() : x(0), y(0) {}
+	Point2D(T x, T y) : x(x), y(y) {}
+
+	virtual ~Point2D() = default;
 	Point2D(const Point2D&) = default;
 	Point2D& operator=(const Point2D&) = default;
+	Point2D(Point2D&&) = default;
+	Point2D& operator=(Point2D&&) = default;
 
 	T x;
 	T y;
 
-	/** @return The distance to the origin */
+	/** \return The distance to the origin */
 	double dist()
 	{
 		return pow(x * x + y * y, 0.5);
 	}
 
-	/** @return The normalized direction */
+	/** \return The normalized direction */
 	Point2D dir()
 	{
 		return (*this) / dist();
@@ -69,8 +73,7 @@ struct Point2D
 	}
 };
 
-/** The template class for the shelf corners — the slots for placing of rectangles.
-*/
+/** \brief The template class for the shelf corners — the slots for placing of rectangles.*/
 template <class T>
 struct ShelfCorner2D
 {
@@ -89,6 +92,6 @@ using Vector = Point2D<double>;
 
 using ShelfCorner = ShelfCorner2D<double>;
 
-const int MISSING_CONTAINER_ID = -1;  // default id
-const double POINT_PRECISION = 0.5;   // 0.5 for a pixel
-const int TIME_LIMIT = 1000;          // ms
+constexpr int MISSING_CONTAINER_ID = -1;  // default id
+constexpr double POINT_PRECISION = 0.5;   // 0.5 for a pixel
+constexpr int TIME_LIMIT = 1000;          // ms

@@ -11,9 +11,9 @@
 #include "Benchmarking.h"
 
 
-/** Main algorithm of packing with rototions. */
-void packUp(std::vector<std::shared_ptr<Rectangle> >& rectangles,
-    std::vector<Container>& containers, Size& containerSize)
+/** \brief Main algorithm of packing with rotations. */
+void packUp(std::vector<std::shared_ptr<Rectangle>>& rectangles,
+            std::vector<Container>& containers, const Size& containerSize)
 {
     std::sort(rectangles.begin(), rectangles.end(),
         [](auto a, auto b) {
@@ -23,7 +23,7 @@ void packUp(std::vector<std::shared_ptr<Rectangle> >& rectangles,
 
     containers.reserve(rectangles.size() + 1);
     int containerId = 0;
-    containers.push_back(Container(containerId++, containerSize));
+    containers.emplace_back(containerId++, containerSize);
 
     for (auto& r : rectangles) {
         bool isPlaced = false;
@@ -38,7 +38,7 @@ void packUp(std::vector<std::shared_ptr<Rectangle> >& rectangles,
             else {
                 isPlaced = currentContainer.placeFirst(r);
                 if (isPlaced) {
-                    containers.push_back(Container(containerId++, containerSize));
+                    containers.emplace_back(containerId++, containerSize);
                 }
             }
 
@@ -48,7 +48,7 @@ void packUp(std::vector<std::shared_ptr<Rectangle> >& rectangles,
     containers.pop_back();
 }
 
-/** Experimental improvement of packing from opposite side on shelfs. */
+/** \brief Experimental improvement of packing from opposite side on shelfs. */
 void packBack(std::vector<std::shared_ptr<Rectangle> >& rectangles,
     std::vector<Container>& containers, Size& containerSize)
 {
@@ -96,7 +96,7 @@ void cleanUp(std::vector<std::shared_ptr<Rectangle> >& rectangles)
 
 int main()
 {
-    Size containerSize;
+    Size containerSize{};
     std::vector<std::shared_ptr<Rectangle> > rectangles;
     DataProvider parser;
     if (!parser.parseData(containerSize, rectangles)) {
@@ -105,15 +105,15 @@ int main()
 
     std::vector<Container> containers;
 
-    size_t start_solve_time = clock();
+    const size_t start_solve_time = clock();
 
     packUp(rectangles, containers, containerSize);
     packBack(rectangles, containers, containerSize);
     cleanUp(rectangles);
 
-    std::clog << "Solving time:\n  " << (double(clock() - start_solve_time)) << " ms\n\n";
+    std::clog << "Solving time:\n  " << static_cast<double>(clock() - start_solve_time) << " ms\n\n";
 
-    parser.outputData(containerSize, rectangles);
+    DataProvider::outputData(containerSize, rectangles);
 
     return EXIT_SUCCESS;
 }

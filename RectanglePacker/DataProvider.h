@@ -1,24 +1,20 @@
 /******************************************************************************************************************************************
 	 * File: DataProvider.h
-	 * Author: Lunåv Arseniy (c) 2020
+	 * Author: Lunåv Arseniy (c) 2022
 	 * Email: lunars@mail.ru
 ******************************************************************************************************************************************/
 #pragma once
 #include "pch.h"
-#include "Rectangle.h"
+class Rectangle;
 
 
-class DataProvider
+class DataProvider final
 {
 public:
-	DataProvider();
-	~DataProvider();
-
 	bool parseData(Size& size, std::vector<std::shared_ptr<Rectangle> > &rectangles);
-	void outputData(const Size& containerSize, std::vector<std::shared_ptr<Rectangle> >& rectangles);
-
+    static void outputData(const Size& containerSize, const std::vector<std::shared_ptr<Rectangle>>& rectangles);
 
 private:
-	std::vector<std::vector<int> > parsedData;
+	std::vector<std::vector<int> > m_parsedData;
 };
 

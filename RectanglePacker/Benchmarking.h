@@ -1,25 +1,17 @@
 /******************************************************************************************************************************************
 	 * File: Benchmarking.h
-	 * Author: Lunåv Arseniy (c) 2020
+	 * Author: Lunåv Arseniy (c) 2022
 	 * Email: lunars@mail.ru
 ******************************************************************************************************************************************/
 #pragma once
-
 #include "pch.h"
-#include "Rectangle.h"
-#include "Container.h"
+class Container;
 
 
-class Benchmarking
+class Benchmarking final
 {
 public:
-	Benchmarking();
-	~Benchmarking();
-	Benchmarking(const Benchmarking&) = delete;
-	Benchmarking& operator=(const Benchmarking&) = delete;
-
-	double calculateDensity(Container& container);
-
-	void logInfo(const std::vector<Container>& containers);
+    static double calculateDensity(const Container& container);
+    static void logInfo(const std::vector<Container>& containers);
 };
 

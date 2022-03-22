@@ -1,53 +1,50 @@
 /******************************************************************************************************************************************
 	 * File: Container.h
-	 * Author: Lunåv Arseniy (c) 2020
+	 * Author: Lunåv Arseniy (c) 2022
 	 * Email: lunars@mail.ru
 ******************************************************************************************************************************************/
 #include "Container.h"
+#include "Rectangle.h"
 
 
 Container::Container()
-	: containerId(MISSING_CONTAINER_ID),
-	size({}),
-	isEmpty(true),
-	tiltAngle(0)
+	: m_containerId(MISSING_CONTAINER_ID),
+	m_size({}),
+	m_isEmpty(true),
+	m_tiltAngle(0)
 {
-	ShelfCorner initialShelfCorner = { Vector(0, 1), Point(0, 0), Vector(1, 0) };
-	mainShelfSlots.push_back(initialShelfCorner);
+    const ShelfCorner initialShelfCorner = { Vector(0, 1), Point(0, 0), Vector(1, 0) };
+	m_mainShelfSlots.push_back(initialShelfCorner);
 }
 
 Container::Container(int containerId, const Size& size)
-	: containerId(containerId),
-	size(size),
-	isEmpty(true),
-	tiltAngle(0)
+	: m_containerId(containerId),
+	m_size(size),
+	m_isEmpty(true),
+	m_tiltAngle(0)
 {
-	ShelfCorner initialShelfCorner = { Vector(0, 1), Point(0, 0), Vector(1, 0) };
-	mainShelfSlots.push_back(initialShelfCorner);
+    const ShelfCorner initialShelfCorner = { Vector(0, 1), Point(0, 0), Vector(1, 0) };
+	m_mainShelfSlots.push_back(initialShelfCorner);
 }
 
-Container::~Container()
+int Container::getContainerId() const
 {
+	return m_containerId;
 }
 
-int Container::getContainerId()
+bool Container::getIsEmpty() const
 {
-	return containerId;
-}
-
-bool Container::getIsEmpty()
-{
-	return isEmpty;
+	return m_isEmpty;
 }
 
 bool Container::placeFirst(std::shared_ptr<Rectangle> rectangle)
 {
 	const Size& rSize = rectangle->getSize();
 	double rH = rSize.height;
-	double rW = rSize.width;
+    const double rW = rSize.width;
 
-	double h = this->size.height;
-	double w = this->size.width;
+    const double h = this->m_size.height;
+    const double w = this->m_size.width;
 
 	if (rW < rH || w < h) {
 		std::cerr << "It is assumed that the width is equal or greater than the height at the start.\n";
@@ -55,73 +52,73 @@ bool Container::placeFirst(std::shared_ptr<Rectangle> rectangle)
 	}
 
 	if (rH > h || (rH > w)) {
-		Size s = rectangle->getSize();
+        const Size s = rectangle->getSize();
 		std::clog << "The rectangle  " << s.width << " x " << s.height << "  is ignored.\n";
 		return false;
 	}
 
 	if (rW > w) {
 		// rH * sin(alpha) + rW * cos(alpha) == w, where alpha is the tilt angle of the placed rectangle
-		double a = pow(rH, 2) + pow(rW, 2);
-		double d = pow(a - pow(w, 2), 0.5);
-		double tiltAngleSin = (w * rH + rW * d) / a;
-		double tiltAngleCos = (w * rW - rH * d) / a;
+        const double a = pow(rH, 2) + pow(rW, 2);
+        const double d = pow(a - pow(w, 2), 0.5);
+        const double tiltAngleSin = (w * rH + rW * d) / a;
+        const double tiltAngleCos = (w * rW - rH * d) / a;
 
-		double p2y = rW * tiltAngleSin + rH * tiltAngleCos;
+        const double p2y = rW * tiltAngleSin + rH * tiltAngleCos;
 		if (p2y > h) {
 			return false;  // In this case at least one rectangle corner is outside the container.
 		}
-		tiltAngle = acos(tiltAngleCos);
+		m_tiltAngle = acos(tiltAngleCos);
 
-		Point p0 = { rH * tiltAngleSin, 0 };
-		Point p1 = { 0, rH * tiltAngleCos };
-		Point p2 = { w - rH * tiltAngleSin, p2y };
-		Point p3 = { w, rW * tiltAngleSin };
+        const Point p0 = { rH * tiltAngleSin, 0 };
+        const Point p1 = { 0, rH * tiltAngleCos };
+        const Point p2 = { w - rH * tiltAngleSin, p2y };
+        const Point p3 = { w, rW * tiltAngleSin };
 
-		std::array<Point, 4> rectangleCorners = { p0, p1, p2, p3 };
-		rectangle->placeToPosition(rectangleCorners, containerId);
+        const std::array<Point, 4> rectangleCorners = { p0, p1, p2, p3 };
+		rectangle->placeToPosition(rectangleCorners, m_containerId);
 
-		mainShelfSlots[0] = { {0, 1}, p1, p2 - p1 };
-		tiltShelfSlots.push_back({ {0, -1}, p3, p0 - p3 });
+		m_mainShelfSlots[0] = { {0, 1}, p1, p2 - p1 };
+		m_tiltShelfSlots.push_back({ {0, -1}, p3, p0 - p3 });
 	}
 	else {
-		rectangle->placeToPosition(containerId);
-		mainShelfSlots[0] = { {0, 1}, {0, rH}, {1, 0} };
-		mainShelfSlots.push_back({ {0, 1}, rectangle->getCorners()[3], { 1, 0 } });
+		rectangle->placeToPosition(m_containerId);
+		m_mainShelfSlots[0] = { {0, 1}, {0, rH}, {1, 0} };
+		m_mainShelfSlots.push_back({ {0, 1}, rectangle->getCorners()[3], { 1, 0 } });
 	}
 	
-	isEmpty = false;
-	placedRectangles.push_back(rectangle);
+	m_isEmpty = false;
+	m_placedRectangles.push_back(rectangle);
 	return true;
 }
 
 bool Container::placeNext(std::shared_ptr<Rectangle> rectangle)
 {
-	for (auto it = mainShelfSlots.begin(), itEnd = mainShelfSlots.end(); it != itEnd; ++it) {
-		if (rectangle->placeToShelf(*it, size, containerId, true, tiltAngle)) {
-			Point p1 = rectangle->getCorners()[1];
-			Point p2 = rectangle->getCorners()[2];
-			Point p3 = rectangle->getCorners()[3];
+	for (auto it = m_mainShelfSlots.begin(), itEnd = m_mainShelfSlots.end(); it != itEnd; ++it) {
+		if (rectangle->placeToShelf(*it, m_size, m_containerId, true, m_tiltAngle)) {
+            const Point p1 = rectangle->getCorners()[1];
+            const Point p2 = rectangle->getCorners()[2];
+            const Point p3 = rectangle->getCorners()[3];
 			(*it) = { {0, 1}, p1, p2 - p1 };
-			if (it == mainShelfSlots.end() - 1) {
-				mainShelfSlots.push_back({ {0, 1}, p3, p2 - p1 });
+			if (it == m_mainShelfSlots.end() - 1) {
+				m_mainShelfSlots.push_back({ {0, 1}, p3, p2 - p1 });
 			}
-			placedRectangles.push_back(rectangle);
+			m_placedRectangles.push_back(rectangle);
 			return true;
 		}
 
 	}
 
-	for (auto it = tiltShelfSlots.begin(), itEnd = tiltShelfSlots.end(); it != itEnd; ++it) {
-		if (rectangle->placeToShelf(*it, size, containerId, false, tiltAngle)) {
-			Point p1 = rectangle->getCorners()[1];
-			Point p2 = rectangle->getCorners()[2];
-			Point p3 = rectangle->getCorners()[3];
+	for (auto it = m_tiltShelfSlots.begin(), itEnd = m_tiltShelfSlots.end(); it != itEnd; ++it) {
+		if (rectangle->placeToShelf(*it, m_size, m_containerId, false, m_tiltAngle)) {
+            const Point p1 = rectangle->getCorners()[1];
+            const Point p2 = rectangle->getCorners()[2];
+            const Point p3 = rectangle->getCorners()[3];
 			(*it) = { {0, -1}, p1, p2 - p1 };
-			if (it == tiltShelfSlots.end() - 1) {
-				tiltShelfSlots.push_back({ {0, -1}, p3, p2 - p1 });
+			if (it == m_tiltShelfSlots.end() - 1) {
+				m_tiltShelfSlots.push_back({ {0, -1}, p3, p2 - p1 });
 			}
-			placedRectangles.push_back(rectangle);
+			m_placedRectangles.push_back(rectangle);
 			return true;
 		}
 	}
@@ -131,11 +128,11 @@ bool Container::placeNext(std::shared_ptr<Rectangle> rectangle)
 
 bool Container::placeOpposite(std::shared_ptr<Rectangle> rectangle)
 {
-	for (auto it = oppositeShelfSlots.rbegin(); it != oppositeShelfSlots.rend(); ++it) {
-		if (rectangle->placeToShelf(*it, size, containerId, placedRectangles)) {
+	for (auto it = m_oppositeShelfSlots.rbegin(); it != m_oppositeShelfSlots.rend(); ++it) {
+		if (rectangle->placeToShelf(*it, m_size, m_containerId, m_placedRectangles)) {
 			// (*it) = { {0, -1}, {(*it).p.x - double(rectangle->getSize().width), (*it).p.y}, {-1, 0} };
-			(*it).p.x = (*it).p.x - double(rectangle->getSize().width);
-			placedRectangles.push_back(rectangle);
+			(*it).p.x = (*it).p.x - static_cast<double>(rectangle->getSize().width);
+			m_placedRectangles.push_back(rectangle);
 			return true;
 		}
 	}
@@ -143,38 +140,38 @@ bool Container::placeOpposite(std::shared_ptr<Rectangle> rectangle)
 	return false;
 }
 
-const std::list<std::shared_ptr<Rectangle> >& Container::getPlacedRectangles()
+const std::list<std::shared_ptr<Rectangle> >& Container::getPlacedRectangles() const
 {
-	return placedRectangles;
+	return m_placedRectangles;
 }
 
 void Container::updateOppositeShelfSlots()
 {
-	oppositeShelfSlots.resize(mainShelfSlots.size());
+	m_oppositeShelfSlots.resize(m_mainShelfSlots.size());
 
-	for (auto itM = mainShelfSlots.begin() + 1, itO = oppositeShelfSlots.begin(),
-		itMEnd = mainShelfSlots.end(); itM != itMEnd; ++itM, ++itO) {
+	for (auto itM = m_mainShelfSlots.begin() + 1, itO = m_oppositeShelfSlots.begin(),
+		itMEnd = m_mainShelfSlots.end(); itM != itMEnd; ++itM, ++itO) {
 
-		(*itO) = { {0, -1}, {(*itM).p.x, double(size.height)}, {-1, 0} };
+		(*itO) = { {0, -1}, {(*itM).p.x, static_cast<double>(m_size.height)}, {-1, 0} };
 	}
-	*(oppositeShelfSlots.end() - 1) = { 
+	*(m_oppositeShelfSlots.end() - 1) = { 
 		{0, -1}, 
-		{double(size.width), double(size.height)}, 
+		{static_cast<double>(m_size.width), static_cast<double>(m_size.height)}, 
 		{-1, 0} 
 	};
 }
 
 void Container::excludeRectangle(std::shared_ptr<Rectangle> rectangle)
 {
-	placedRectangles.remove(rectangle);
+	m_placedRectangles.remove(rectangle);
 }
 
-const Size& Container::getSize()
+const Size& Container::getSize() const
 {
-	return size;
+	return m_size;
 }
 
 void Container::setSize(const Size& size)
 {
-	this->size = size;
+	this->m_size = size;
 }
