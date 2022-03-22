@@ -1,6 +1,6 @@
 /******************************************************************************************************************************************
 	 * File: Container.h
-	 * Author: Lunåv Arseniy (c) 2022
+	 * Author: Lunev Arseniy (c) 2022
 	 * Email: lunars@mail.ru
 ******************************************************************************************************************************************/
 #pragma once
@@ -17,7 +17,7 @@ public:
 	virtual ~Container() = default;
 	Container(const Container&) = default;
 	Container& operator=(const Container&) = default;
-	Container(Container&&) = default;
+	Container(Container&&) noexcept = default;
 	Container& operator=(Container&&) = default;
 
 	const Size& getSize() const;

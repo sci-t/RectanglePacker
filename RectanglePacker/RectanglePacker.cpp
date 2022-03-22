@@ -1,7 +1,7 @@
 ﻿/******************************************************************************************************************************************
      * File: RectanglePacker.cpp
      * Description: This is a program for solving of NP-hard problem of packing with additional allowable rotations.
-     * Author: Lunеv Arseniy (c) 2022
+     * Author: Lunev Arseniy (c) 2022
      * Email: lunars@mail.ru
 ******************************************************************************************************************************************/
 #include "pch.h"
@@ -25,7 +25,7 @@ void packUp(std::vector<std::shared_ptr<Rectangle>>& rectangles,
     int containerId = 0;
     containers.emplace_back(containerId++, containerSize);
 
-    for (auto& r : rectangles) {
+    for (const auto& r : rectangles) {
         bool isPlaced = false;
 
         auto contIt = containers.begin();
