@@ -204,7 +204,7 @@ bool Rectangle::isInside(const Point& point, const std::array<Point, 4>& rectang
 bool Rectangle::isInside(const std::array<Point, 4>& containerCorners,
     const std::array<Point, 4>& rectangleCorners) const
 {
-    for (auto& p : rectangleCorners) {
+    for (const auto& p : rectangleCorners) {
         if (!isInside(p, containerCorners, POINT_PRECISION)) {
             return false;
         }

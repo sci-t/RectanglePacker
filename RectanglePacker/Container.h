@@ -20,17 +20,17 @@ public:
     Container(Container&&) noexcept = default;
     Container& operator=(Container&&) = default;
 
-    const Size& getSize() const;
+    [[nodiscard]] const Size& getSize() const;
     void setSize(const Size& size);
 
-    int getContainerId() const;
-    bool getIsEmpty() const;
+    [[nodiscard]] int getContainerId() const;
+    [[nodiscard]] bool getIsEmpty() const;
 
     bool placeFirst(const std::shared_ptr<Rectangle>& rectangle);
     bool placeNext(const std::shared_ptr<Rectangle>& rectangle);
     bool placeOpposite(const std::shared_ptr<Rectangle>& rectangle);
 
-    const std::list<std::shared_ptr<Rectangle> >& getPlacedRectangles() const;
+    [[nodiscard]] const std::list<std::shared_ptr<Rectangle> >& getPlacedRectangles() const;
     void updateOppositeShelfSlots();
     void excludeRectangle(const std::shared_ptr<Rectangle>& rectangle);
 
