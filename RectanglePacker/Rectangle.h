@@ -19,10 +19,10 @@ public:
 	Rectangle& operator=(const Rectangle&) = default;
 	Rectangle& operator=(Rectangle&&) = default;
 
-	const Size& getSize();
+	const Size& getSize() const;
 	void setSize(const Size& size);
-	const std::array<Point, 4>& getCorners();
-	int getContainerId();
+	const std::array<Point, 4>& getCorners() const;
+	int getContainerId() const;
 
 	bool placeToShelf(const ShelfCorner& shelfCorner, const Size& containerSize, int containerId,
 		bool isMainShelfs, double tiltAngle);
@@ -34,7 +34,7 @@ public:
 	void placeByDefault();
 
 	void flip();
-	bool isIntersect(std::shared_ptr<Rectangle> rect, const std::array<Point, 4>& currentCorners);
+	bool isIntersect(const std::shared_ptr<Rectangle>& rect, const std::array<Point, 4>& currentCorners) const;
 
 private:
 
@@ -48,10 +48,10 @@ private:
     static bool checkIfInside(const Size& containerSize, const std::array<Point, 4>& currentCorners,
                               bool isMainShelfs);
 
-	bool isInside(const Point& point, const std::array<Point, 4>& rectangleCorners,
-		double precision);
+    static bool isInside(const Point& point, const std::array<Point, 4>& rectangleCorners,
+                         double precision);
 	bool isInside(const std::array<Point, 4>& containerCorners,
-		const std::array<Point, 4>& rectangleCorners);
+		const std::array<Point, 4>& rectangleCorners) const;
 
     static double computeSideSign(const Point& p, const Point& someCorner, const Point& nextCorner);
 };

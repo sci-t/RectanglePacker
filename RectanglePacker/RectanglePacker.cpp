@@ -1,7 +1,7 @@
 ﻿/******************************************************************************************************************************************
      * File: RectanglePacker.cpp
-     * Description: This is the program for solving of NP-problem of packing with additional allowable rotations.
-     * Author: Lunеv Arseniy (c) 2020
+     * Description: This is a program for solving of NP-hard problem of packing with additional allowable rotations.
+     * Author: Lunеv Arseniy (c) 2022
      * Email: lunars@mail.ru
 ******************************************************************************************************************************************/
 #include "pch.h"
@@ -52,7 +52,7 @@ void packUp(std::vector<std::shared_ptr<Rectangle>>& rectangles,
 void packBack(std::vector<std::shared_ptr<Rectangle> >& rectangles,
     std::vector<Container>& containers, Size& containerSize)
 {
-    for (auto& r : rectangles) {
+    for (const auto& r : rectangles) {
         r->flip();
     }
     std::sort(rectangles.begin(), rectangles.end(),
@@ -111,7 +111,7 @@ int main()
     packBack(rectangles, containers, containerSize);
     cleanUp(rectangles);
 
-    std::clog << "Solving time:\n  " << static_cast<double>(clock() - start_solve_time) << " ms\n\n";
+    std::clog << "\nSolving time:\n  " << static_cast<double>(clock() - start_solve_time) << " ms\n\n";
 
     DataProvider::outputData(containerSize, rectangles);
 

@@ -27,9 +27,9 @@ void Rectangle::placeByDefault()
 		flip();
 	}
 	m_corners[0] = { 0, 0 };
-	m_corners[1] = { 0, double(m_size.height) };
-	m_corners[2] = { double(m_size.width), double(m_size.height) };
-	m_corners[3] = { double(m_size.width), 0 };
+	m_corners[1] = { 0, static_cast<double>(m_size.height) };
+	m_corners[2] = { static_cast<double>(m_size.width), static_cast<double>(m_size.height) };
+	m_corners[3] = { static_cast<double>(m_size.width), 0 };
 }
 
 void Rectangle::flip()
@@ -37,12 +37,12 @@ void Rectangle::flip()
 	std::swap(m_size.width, m_size.height);
 }
 
-bool Rectangle::isIntersect(std::shared_ptr<Rectangle> rect0,
-	const std::array<Point, 4>& currentCorners)
+bool Rectangle::isIntersect(const std::shared_ptr<Rectangle>& rect0,
+                            const std::array<Point, 4>& currentCorners) const
 {
-	std::array<Point, 4> corners0 = rect0->getCorners();
+    const std::array<Point, 4> corners0 = rect0->getCorners();
 
-	// Check if some corners are inside anothoer rectangle
+	// Check if some corners are inside another rectangle
 	for (auto& corner : corners0) {
 		if (isInside(corner, currentCorners, -POINT_PRECISION)) {
 			return true;
@@ -55,11 +55,11 @@ bool Rectangle::isIntersect(std::shared_ptr<Rectangle> rect0,
 	}
 
 	// Additional cases when some edges coincide:
-	Point center = (currentCorners[0] + currentCorners[1] + currentCorners[2] + currentCorners[3]) / 4.0;
+    const Point center = (currentCorners[0] + currentCorners[1] + currentCorners[2] + currentCorners[3]) / 4.0;
 	if (isInside(center, corners0, -POINT_PRECISION)) {
 		return true;
 	}
-	Point center0 = (corners0[0] + corners0[1] + corners0[2] + corners0[3]) / 4.0;
+    const Point center0 = (corners0[0] + corners0[1] + corners0[2] + corners0[3]) / 4.0;
 	if (isInside(center0, currentCorners, -POINT_PRECISION)) {
 		return true;
 	}
@@ -83,17 +83,17 @@ void Rectangle::setSize(const Size& size)
 	placeByDefault();
 }
 
-const std::array<Point, 4>& Rectangle::getCorners()
+const std::array<Point, 4>& Rectangle::getCorners() const
 {
 	return m_corners;
 }
 
-int Rectangle::getContainerId()
+int Rectangle::getContainerId() const
 {
 	return m_containerId;
 }
 
-const Size& Rectangle::getSize()
+const Size& Rectangle::getSize() const
 {
 	return m_size;
 }
@@ -156,9 +156,9 @@ bool Rectangle::placeToShelf(const ShelfCorner& shelfCorner, const Size& contain
 	for (auto& c : currentCorners) {
 		std::array<Point, 4> containerCorners = {
 			Point({0, 0}),
-			Point({0, double(containerSize.height)}),
-			Point({double(containerSize.width), double(containerSize.height)}),
-			Point({double(containerSize.width), 0})
+			Point({0, static_cast<double>(containerSize.height)}),
+			Point({static_cast<double>(containerSize.width), static_cast<double>(containerSize.height)}),
+			Point({static_cast<double>(containerSize.width), 0})
 		};
 		if (!isInside(containerCorners, currentCorners)) {
 			return false;
@@ -202,7 +202,7 @@ bool Rectangle::isInside(const Point& point, const std::array<Point, 4>& rectang
 }
 
 bool Rectangle::isInside(const std::array<Point, 4>& containerCorners,
-	const std::array<Point, 4>& rectangleCorners)
+	const std::array<Point, 4>& rectangleCorners) const
 {
 	for (auto &p : rectangleCorners) {
 		if (!isInside(p, containerCorners, POINT_PRECISION)) {
