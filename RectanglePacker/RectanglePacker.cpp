@@ -13,7 +13,7 @@
 
 /** \brief Main algorithm of packing with rotations. */
 void packUp(std::vector<std::shared_ptr<Rectangle>>& rectangles,
-            std::vector<Container>& containers, const Size& containerSize)
+    std::vector<Container>& containers, const Size& containerSize)
 {
     std::sort(rectangles.begin(), rectangles.end(),
         [](auto a, auto b) {
@@ -67,13 +67,13 @@ void packBack(std::vector<std::shared_ptr<Rectangle> >& rectangles,
         cont.updateOppositeShelfSlots();
     }
 
-    for(auto contRIt = containers.rbegin(), contRItEnd = containers.rend();
+    for (auto contRIt = containers.rbegin(), contRItEnd = containers.rend();
         contRIt != contRItEnd; ++contRIt) {
         for (auto& r : (*contRIt).getPlacedRectangles()) {
             bool isReplaced = false;
-            for (auto contIt = containers.begin(); 
+            for (auto contIt = containers.begin();
                 (*contIt).getContainerId() != (*contRIt).getContainerId(); ++contIt) {
-                    
+
                 isReplaced = (*contIt).placeOpposite(r);
                 if (isReplaced) {
                     break;
@@ -93,6 +93,8 @@ void cleanUp(std::vector<std::shared_ptr<Rectangle> >& rectangles)
         }
     );
 }
+
+
 
 int main()
 {

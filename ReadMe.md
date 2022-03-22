@@ -1,7 +1,8 @@
 # RectanglePacker
 
 ## Description
-RectanglePacker is a module for solving the NP-hard packing problem: place the different rectangles in the containers.
+RectanglePacker is a module for solving the NP-hard packing problem: place the different rectangles in the containers of the same fixed size.
+The target solution presupposes the minimum number of such containers.
 
 ![Example 1](https://github.com/sci-t/space/blob/master/1.jpg?raw=true)
 
